@@ -18,7 +18,7 @@
 export PATH="$HOME/.elan/bin:$PATH"
 cd "$(dirname "$0")" || exit 1
 LIB="Viviani"
-REQUIRED="Affine.Simplex.Equilateral.height_eq Affine.Simplex.Regular.sum_dist_eq_height Affine.Simplex.exists_forall_sum_signedInfDist_eq_iff Affine.Simplex.signedInfDist_eq_dist_of_mem_closedInterior Affine.Simplex.sum_dist_eq_height Affine.Simplex.sum_signedInfDist_div_height Affine.Simplex.sum_signedInfDist_eq_height Viviani.equilateral_triangle Viviani.equilateral_triangle' Viviani.perpReflection"
+REQUIRED="Affine.Simplex.Equilateral.height_eq Affine.Simplex.Regular.sum_dist_eq_height Affine.Simplex.exists_forall_sum_signedInfDist_eq_iff Affine.Simplex.signedInfDist_eq_dist_of_mem_closedInterior Affine.Simplex.sum_dist_eq_height Affine.Simplex.sum_signedInfDist_div_height Affine.Simplex.sum_signedInfDist_eq_height Viviani.equilateral_triangle Viviani.equilateral_triangle' Viviani.perpReflection Viviani.l14_sum_signedInfDist_div_height Viviani.l14_sum_signedInfDist_eq_height Viviani.l14_exists_forall_sum_signedInfDist_eq_iff Viviani.l14_sum_infDist_eq_height Viviani.l14_equilateral_height_eq Viviani.l14_regular_sum_infDist Viviani.l14_viviani_triangle Viviani.l14w_viviani Viviani.l14b_dist_eq_infDist Viviani.l14b_height_eq_infDist Viviani.l14b_witness_indep Viviani.Classical.signedDistLine_face_eq Viviani.Classical.face_eq Viviani.Classical.height_two_eq Viviani.Classical.infDist_face Viviani.Classical.cov_TriSimplex3_b_closed Viviani.Classical.cov_TriSimplex3_a Viviani.Classical.cov_TriSimplex3_b"
 SOURCES="$(find $LIB -name '*.lean' | sort | tr '\n' ' ') $LIB.lean"
 [ -e .lake/packages/mathlib ] || lake exe cache get || { echo "FAIL: could not fetch Mathlib cache"; exit 1; }
 if grep -nE "\bsorry\b|\badmit\b|native_decide|\baxiom\b|#eval|\brun_cmd\b|\binitialize\b|\bIO\b|\bdebug\.|\bmacro|\belab|\bsyntax\b|\bnotation\b|\binfix|\bprefix\b|\bpostfix\b|import Lean|open Lean|\bset_option\b" $SOURCES; then
@@ -26,7 +26,7 @@ if grep -nE "\bsorry\b|\badmit\b|native_decide|\baxiom\b|#eval|\brun_cmd\b|\bini
 build=$(lake build $LIB 2>&1); bstatus=$?
 printf '%s\n' "$build" | tail -3
 [ "$bstatus" -eq 0 ] || { printf '%s\n' "$build"; echo "FAIL: build"; exit 1; }
-chk=$(mktemp --suffix=.lean -p . .gatecheck_XXXX)
+chk=".gatecheck_$$.lean"
 trap 'rm -f "$chk"' EXIT
 { echo "import $LIB"; for t in $REQUIRED; do echo "#print axioms $t"; done; } > "$chk"
 out=$(lake env lean "$chk" 2>&1); status=$?
